@@ -5,7 +5,7 @@ function [T,D1,D2,splits,fails,flop_count] = dnc_eig(n,A,B,epsilon,alpha,g,beta,
 % parameter and an acceptable failure probability. 
 %
 % The routine requires that the epsilon-pseudospectrum of (A,n.^(alpha)*B) 
-% is shattered with respect to the grid g, as defined by  Banks et al. 
+% is shattered with respect to the grid g, as defined by Banks et al. 
 % (Foundations of Computational Math 2022).
 %
 % The grid g is stored as a vector of four real numbers; the first two 
