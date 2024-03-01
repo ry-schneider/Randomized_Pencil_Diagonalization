@@ -68,24 +68,26 @@ tiledlayout(1,3)
 nexttile
 scatter(real(eigs(:,1)),imag(eigs(:,1)),'filled');
 axis([-1 1 -1 1]);
-title('$\varepsilon = 10^{-2}$','interpreter','latex','FontSize',14);
-xlabel('Real Axis','interpreter','latex','FontSize',14);
-ylabel('Imaginary Axis','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
+title('$\varepsilon = 10^{-2}$','interpreter','latex','FontSize',18);
+xlabel('Real','interpreter','latex','FontSize',18);
+ylabel('Imaginary','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
+% --------------------------------------------------------------------------------
 nexttile
 scatter(real(eigs(:,2)),imag(eigs(:,2)),'filled');
 axis([-1 1 -1 1]);
-title('$\varepsilon = 10^{-3}$','interpreter','latex','FontSize',14);
-xlabel('Real Axis','interpreter','latex','FontSize',14);
-ylabel('Imaginary Axis','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
+title('$\varepsilon = 10^{-3}$','interpreter','latex','FontSize',18);
+xlabel('Real','interpreter','latex','FontSize',18);
+ylabel('Imaginary','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
+% --------------------------------------------------------------------------------
 nexttile
 scatter(real(eigs(:,3)),imag(eigs(:,3)),'filled');
 axis([-1 1 -1 1]);
-title('$\varepsilon = 10^{-4}$','interpreter','latex','FontSize',14);
-xlabel('Real Axis','interpreter','latex','FontSize',14);
-ylabel('Imaginary Axis','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
+title('$\varepsilon = 10^{-4}$','interpreter','latex','FontSize',18);
+xlabel('Real','interpreter','latex','FontSize',18);
+ylabel('Imaginary','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
 % -------------------------------------------
 % Create histograms of diagonalization error
 % -------------------------------------------
@@ -93,25 +95,39 @@ figure
 tiledlayout(1,3)
 nexttile
 histogram(diag_error(:,1))
-title('$\varepsilon = 10^{-2}$','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
-xlabel('$\log_{10}\left(\max \left\{ ||A - SDT^{-1}||_2, ||B - SIT^{-1}||_2 \right\}\right)$','interpreter','latex','FontSize',14);
-ylabel('Frequency','interpreter','latex','FontSize',14);
-xline(-2,'--r','$\log_{10}(\varepsilon)$','Interpreter','latex','LineWidth',2,'FontSize',14)
+title('$\varepsilon = 10^{-2}$','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
+xlabel('$\log_{10}$(diag error)','interpreter','latex','FontSize',18);
+xline(-2,'--r','$\log_{10}(\varepsilon)$','Interpreter','latex','LineWidth',2,'FontSize',16)
+xL=xlim;
+yL=ylim;
+formatSpec = "Fails: %d";
+str = sprintf(formatSpec,nnz(diag_error(:,1) > -2));
+text(xL(2)-0.025*(xL(2)-xL(1)),0.98*yL(2),str,'interpreter','latex','HorizontalAlignment','right','VerticalAlignment','top','FontSize',16)
+% --------------------------------------------------------------------------------
 nexttile
 histogram(diag_error(:,2))
-title('$\varepsilon = 10^{-3}$','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
-xlabel('$\log_{10}\left(\max \left\{ ||A - SDT^{-1}||_2, ||B - SIT^{-1}||_2 \right\}\right)$','interpreter','latex','FontSize',14);
-ylabel('Frequency','interpreter','latex','FontSize',14);
-xline(-3,'--r','$\log_{10}(\varepsilon)$','Interpreter','latex','LineWidth',2,'FontSize',14)
+title('$\varepsilon = 10^{-3}$','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
+xlabel('$\log_{10}$(diag error)','interpreter','latex','FontSize',18);
+xline(-3,'--r','$\log_{10}(\varepsilon)$','Interpreter','latex','LineWidth',2,'FontSize',16)
+xL=xlim;
+yL=ylim;
+formatSpec = "Fails: %d";
+str = sprintf(formatSpec,nnz(diag_error(:,2) > -3));
+text(xL(2)-0.025*(xL(2)-xL(1)),0.98*yL(2),str,'interpreter','latex','HorizontalAlignment','right','VerticalAlignment','top','FontSize',16)
+% --------------------------------------------------------------------------------
 nexttile
 histogram(diag_error(:,3))
-title('$\varepsilon = 10^{-4}$','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
-xlabel('$\log_{10}\left(\max \left\{ ||A - SDT^{-1}||_2, ||B - SIT^{-1}||_2 \right\}\right)$','interpreter','latex','FontSize',14);
-ylabel('Frequency','interpreter','latex','FontSize',14);
-xline(-4,'--r','$\log_{10}(\varepsilon)$','Interpreter','latex','LineWidth',2,'FontSize',14)
+title('$\varepsilon = 10^{-4}$','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
+xlabel('$\log_{10}$(diag error)','interpreter','latex','FontSize',18);
+% xline(-4,'--r','$\log_{10}(\varepsilon)$','Interpreter','latex','LineWidth',2,'LabelHorizontalAlignment','left','FontSize',16)
+xL=xlim;
+yL=ylim;
+formatSpec = "Fails: %d";
+str = sprintf(formatSpec,nnz(diag_error(:,3) > -4));
+text(xL(2)-0.025*(xL(2)-xL(1)),0.98*yL(2),str,'interpreter','latex','HorizontalAlignment','right','VerticalAlignment','top','FontSize',16)
 % ---------------------------------
 % Create histograms of split sizes
 % ---------------------------------
@@ -119,37 +135,36 @@ figure
 tiledlayout(1,3)
 nexttile
 histogram(splits1,'FaceColor',[0.8500 0.3250 0.0980])
-title('$\varepsilon = 10^{-2}$','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
-xlabel('Split Size $(k/m)$','interpreter','latex','FontSize',14);
-ylabel('Frequency','interpreter','latex','FontSize',14);
+title('$\varepsilon = 10^{-2}$','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
+xlabel('Split Size $(k/m)$','interpreter','latex','FontSize',18);
 xL=xlim;
 yL=ylim;
 formatSpec = "Total: %d";
 str = sprintf(formatSpec,size(splits1,1));
-text(0.98*xL(2),0.98*yL(2),str,'interpreter','latex','HorizontalAlignment','right','VerticalAlignment','top','FontSize',14)
+text(0.98*xL(2),0.98*yL(2),str,'interpreter','latex','HorizontalAlignment','right','VerticalAlignment','top','FontSize',16)
+% --------------------------------------------------------------------------------
 nexttile
 histogram(splits2,'FaceColor',[0.8500 0.3250 0.0980])
-title('$\varepsilon = 10^{-3}$','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
-xlabel('Split Size $(k/m)$','interpreter','latex','FontSize',14);
-ylabel('Frequency','interpreter','latex','FontSize',14);
+title('$\varepsilon = 10^{-3}$','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
+xlabel('Split Size $(k/m)$','interpreter','latex','FontSize',18);
 xL=xlim;
 yL=ylim;
 formatSpec = "Total: %d";
 str = sprintf(formatSpec,size(splits2,1));
-text(0.98*xL(2),0.98*yL(2),str,'interpreter','latex','HorizontalAlignment','right','VerticalAlignment','top','FontSize',14)
+text(0.98*xL(2),0.98*yL(2),str,'interpreter','latex','HorizontalAlignment','right','VerticalAlignment','top','FontSize',16)
+% --------------------------------------------------------------------------------
 nexttile
 histogram(splits3,'FaceColor',[0.8500 0.3250 0.0980]);
-title('$\varepsilon = 10^{-4}$','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
-xlabel('Split Size $(k/m)$','interpreter','latex','FontSize',14);
-ylabel('Frequency','interpreter','latex','FontSize',14);
+title('$\varepsilon = 10^{-4}$','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
+xlabel('Split Size $(k/m)$','interpreter','latex','FontSize',18);
 xL=xlim;
 yL=ylim;
 formatSpec = "Total: %d";
 str = sprintf(formatSpec,size(splits3,1));
-text(0.98*xL(2),0.98*yL(2),str,'interpreter','latex','HorizontalAlignment','right','VerticalAlignment','top','FontSize',14)
+text(0.98*xL(2),0.98*yL(2),str,'interpreter','latex','HorizontalAlignment','right','VerticalAlignment','top','FontSize',16)
 % ----------------------------------------
 % Create histograms of pseudo-flop counts
 % ----------------------------------------
@@ -157,20 +172,19 @@ figure
 tiledlayout(1,3)
 nexttile
 histogram(flop_count(:,1),'FaceColor',[0.6350 0.0780 0.1840]);
-title('$\varepsilon = 10^{-2}$','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
-xlabel('Relative Efficiency Factor','interpreter','latex','FontSize',14);
-ylabel('Frequency','interpreter','latex','FontSize',14);
-text()
+title('$\varepsilon = 10^{-2}$','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
+xlabel('Relative Efficiency Factor','interpreter','latex','FontSize',18);
+% --------------------------------------------------------------------------------
 nexttile
 histogram(flop_count(:,2),'FaceColor',[0.6350 0.0780 0.1840]);
-title('$\varepsilon = 10^{-3}$','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
-xlabel('Relative Efficiency Factor','interpreter','latex','FontSize',14);
-ylabel('Frequency','interpreter','latex','FontSize',14);
+title('$\varepsilon = 10^{-3}$','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
+xlabel('Relative Efficiency Factor','interpreter','latex','FontSize',18);
+% ylabel('Frequency','interpreter','latex','FontSize',14);
+% --------------------------------------------------------------------------------
 nexttile
 histogram(flop_count(:,3),'FaceColor',[0.6350 0.0780 0.1840]);
-title('$\varepsilon = 10^{-4}$','interpreter','latex','FontSize',14);
-set(gca,'TickLabelInterpreter','latex','FontSize',14);
-xlabel('Relative Efficiency Factor','interpreter','latex','FontSize',14);
-ylabel('Frequency','interpreter','latex','FontSize',14);
+title('$\varepsilon = 10^{-4}$','interpreter','latex','FontSize',18);
+set(gca,'TickLabelInterpreter','latex','FontSize',18);
+xlabel('Relative Efficiency Factor','interpreter','latex','FontSize',18);
