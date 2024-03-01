@@ -14,6 +14,9 @@ function [T,D1,D2,splits,fails,flop_count] = dnc_eig(n,A,B,epsilon,alpha,g,beta,
 % horizontal lines. All other grid lines can be obtained from these given
 % the box size omega. Note that g need not be square.
 %
+% The input stop determines the problem size at which divide-and-conquer
+% passes off to QZ.
+%
 % Outputs:
 %   T - matrix of right eigenvectors
 %   (D1,D2) - diagonal pencil containing the eigenvalues of (A,n^(alpha)*B)
