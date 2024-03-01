@@ -43,21 +43,27 @@ figure
 tiledlayout(1,3)
 nexttile
 histogram(eig_error,'FaceColor',[0.4660 0.6740 0.1880])
-set(gca,'TickLabelInterpreter','latex')
-xlabel('$\log_{10}\left( \min_j|\lambda_j - 1| \right)$','interpreter','latex')
-ylabel('Frequency','interpreter','latex')
-title('Eigenvalue Accuracy','interpreter','latex')
+set(gca,'TickLabelInterpreter','latex','FontSize',18)
+xlabel('$\log_{10}\left( \min_j|\lambda_j - 1| \right)$','interpreter','latex','FontSize',18)
+title('Eigenvalue Accuracy','interpreter','latex','FontSize',18)
+% ------------------------------------------------------------------------------------
 nexttile
 histogram(diag_error)
-set(gca,'TickLabelInterpreter','latex')
-xlabel('$\log_{10} \left( \max \left\{ ||A - SDT^{-1}||_2, ||B - SIT^{-1}||_2 \right\} \right)$','interpreter','latex')
-ylabel('Frequency','interpreter','latex')
-title('Diagonalization Accuracy','interpreter','latex')
-xline(-6,'--r','$\log_{10}(\varepsilon)$','Interpreter','latex','LineWidth',2,'FontSize',14)
+set(gca,'TickLabelInterpreter','latex','FontSize',18)
+xlabel('$\log_{10}$(error)','interpreter','latex','FontSize',18)
+title('Diagonalization Accuracy','interpreter','latex','FontSize',18)
+% xline(-6,'--r','$\log_{10}(\varepsilon)$','Interpreter','latex','LabelHorizontalAlignment','left','LineWidth',2,'FontSize',14)
+xL=xlim;
+yL=ylim;
+formatSpec = "Fails: %d";
+str = sprintf(formatSpec,nnz(diag_error(:) > -6));
+text(xL(2)-0.02*(xL(2)-xL(1)),0.98*yL(2),str,'interpreter','latex','HorizontalAlignment','right','VerticalAlignment','top','FontSize',16)
+% ------------------------------------------------------------------------------------
 nexttile
 histogram(split_record,'FaceColor',[0.8500 0.3250 0.0980])
-set(gca,'TickLabelInterpreter','latex')
-xlabel('Split Size $(k/m)$','interpreter','latex')
-ylabel('Frequency','interpreter','latex')
-title('Relative Eigenvalue Split','interpreter','latex')
+set(gca,'TickLabelInterpreter','latex','FontSize',18)
+xlabel('$k/m$','interpreter','latex','FontSize',18)
+title('Split Size','interpreter','latex','FontSize',18)
+
+
 
