@@ -1,4 +1,4 @@
-function [T,D1,D2,splits,fails,flop_count] = dnc_eig(n,A,B,epsilon,alpha,g,beta,omega,theta,splits,fails,flop_count)
+function [T,D1,D2,splits,fails,flop_count] = dnc_eig(n,A,B,epsilon,alpha,g,beta,omega,theta,splits,fails,flop_count,stop)
 % ------------------------------------------------------------------------
 % DNC_EIG executes divide-and-conquer on the pencil (A,n^(alpha)*B) over 
 % the grid g. beta and theta are respectively an eigenvector accuracy
@@ -29,12 +29,19 @@ function [T,D1,D2,splits,fails,flop_count] = dnc_eig(n,A,B,epsilon,alpha,g,beta,
 m = size(A,1);
 s_v = ceil((g(2)-g(1))/omega)+1;
 s_h = ceil((g(4)-g(3))/omega)+1;
-s = max([s_v; s_h]);
+s = max(s_v, s_h);
 % -----------------------------
 % Recursion stopping condition
 % -----------------------------
 if m == 1 
     T = 1; D1 = A; D2 = B;
+elseif m <= stop
+    [T,D] = eig(A,B);
+    for i = 1:m
+        T(:,i) = T(:,i)/norm(T(:,i),2);
+    end
+    D1 = D;
+    D2 = eye(m);
 else
     % ---------------
     % Set parameters
@@ -67,7 +74,7 @@ else
             values(i) = abs(R2(i,i)/R1(i,i));
         end
         lines_checked = lines_checked + 1;
-        k = nnz(values(:) >= sqrt(theta/(10*zeta))*(1-delta)); % sqrt(theta/(10*zeta))*(1-delta)/n.^3);
+        k = nnz(values(:) >= sqrt(theta/(10*zeta))*(1-delta)); %sqrt(theta/(10*zeta))*(1-delta)/n.^3);
         if k < m/5 % search to the left
             right_index = index;
             index = max(floor((left_index + index)/2),1);
@@ -77,8 +84,9 @@ else
         else
            line_found = true;
         end
-        if right_index-left_index <= 1 
+        if right_index-left_index <= 1 || lines_checked >= floor(log2(s_v)+1)
             no_vertical_split = true;
+            vertical_lines_checked = lines_checked;
         end
     end
     % ----------------------------------
@@ -100,15 +108,19 @@ else
         g_R = [h;g(2);g(3);g(4)];
         g_L = [g(1);h;g(3);g(4)];
         flop_count = flop_count + lines_checked*m.^3;
-        [T_R,D_R1,D_R2,splits,fails,flop_count] = dnc_eig(n,A_11,B_11,4*epsilon/5,alpha,g_R,beta/3,omega,theta,splits,fails,flop_count);
-        [T_L,D_L1,D_L2,splits,fails,flop_count] = dnc_eig(n,A_22,B_22,4*epsilon/5,alpha,g_L,beta/3,omega,theta,splits,fails,flop_count);
-        T = [U_R1 U_R2]*[T_R zeros(k,m-k); zeros(m-k,k) T_L];
+        [T_R,D_R1,D_R2,splits,fails,flop_count] = dnc_eig(n,A_11,B_11,4*epsilon/5,alpha,g_R,beta/3,omega,theta,splits,fails,flop_count,stop);
+        [T_L,D_L1,D_L2,splits,fails,flop_count] = dnc_eig(n,A_22,B_22,4*epsilon/5,alpha,g_L,beta/3,omega,theta,splits,fails,flop_count,stop);
+        T = [U_R1*T_R U_R2*T_L];
+        for i = 1:m
+            T(:,i) = T(:,i)/norm(T(:,i),2);
+        end
         D1 = [D_R1 zeros(k,m-k); zeros(m-k,k) D_L1];
         D2 = [D_R2 zeros(k,m-k); zeros(m-k,k) D_L2];
     else
         % ------------------------------------------------------------
         % Switch to searching over horizontal grid lines if necessary
         % ------------------------------------------------------------
+        lines_checked = 0;
         index = max(ceil(s_h/2),1);
         bottom_index = 1;
         top_index = s_h;
@@ -132,7 +144,7 @@ else
             else
                 line_found = true;
             end
-            if top_index-bottom_index <= 1 
+            if top_index-bottom_index <= 1 || lines_checked >= floor(log2(s_h)+1)
                 disp('error: no dividing line found')
                 fails = [fails; m];
                 split_failed = true;
@@ -144,6 +156,7 @@ else
         if split_failed 
             [T,D1] = eig(A,B);
             D2 = eye(m);
+            flop_count = flop_count + (lines_checked+vertical_lines_checked)*m.^3;
         else
             % -----------------------
             % Apply horizontal split
@@ -152,20 +165,23 @@ else
             if m > 3
                 splits = [splits; k/m];
             end
-            [U_L1,U_R1] = deflate(Ascript,Bscript,p,k);
+            [U_R1,U_L1] = deflate(Ascript,Bscript,p,k);
             Ascript = A-1i*(h+1)*B;
             Bscript = A-1i*(h-1)*B;
-            [U_L2,U_R2] = deflate(Ascript,Bscript,p,m-k);
+            [U_R2,U_L2] = deflate(Ascript,Bscript,p,m-k);
             A_11 = U_L1'*A*U_R1;
             B_11 = U_L1'*B*U_R1;
             A_22 = U_L2'*A*U_R2;
             B_22 = U_L2'*B*U_R2;
             g_T = [g(1);g(2);h;g(4)];
             g_B = [g(1);g(2);g(3);h];
-            flop_count = flop_count + lines_checked*m.^3;
-            [T_A,DA1,DA2,splits,fails,flop_count] = dnc_eig(n,A_11,B_11,4*epsilon/5,alpha,g_T,beta/3,omega,theta,splits,fails,flop_count);
-            [T_B,DB1,DB2,splits,fails,flop_count] = dnc_eig(n,A_22,B_22,4*epsilon/5,alpha,g_B,beta/3,omega,theta,splits,fails,flop_count);
-            T = [U_R1 U_R2]*[T_A zeros(k,m-k); zeros(m-k,k) T_B];
+            flop_count = flop_count + (lines_checked+vertical_lines_checked)*m.^3;
+            [T_A,DA1,DA2,splits,fails,flop_count] = dnc_eig(n,A_11,B_11,4*epsilon/5,alpha,g_T,beta/3,omega,theta,splits,fails,flop_count,stop);
+            [T_B,DB1,DB2,splits,fails,flop_count] = dnc_eig(n,A_22,B_22,4*epsilon/5,alpha,g_B,beta/3,omega,theta,splits,fails,flop_count,stop);
+            T = [U_R1*T_A U_R2*T_B];
+            for i = 1:m
+                T(:,i) = T(:,i)/norm(T(:,i),2);
+            end
             D1 = [DA1 zeros(k,m-k); zeros(m-k,k) DB1];
             D2 = [DA2 zeros(k,m-k); zeros(m-k,k) DB2];
         end
