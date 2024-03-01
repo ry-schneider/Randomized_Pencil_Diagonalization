@@ -18,7 +18,7 @@ n = size(A,1);
 % Set relaxed parameters (original are in comments)
 % --------------------------------------------------
 gamma = error/16;
-alpha = 3/2; % (1/2)*ceil(2*(log(1/gamma)/log(n))+3);
+alpha = 0; %(1/2)*ceil(2*(log(1/gamma)/log(n))+3);
 epsilon = gamma/n; % gamma.^5/(64*n.^((11*alpha+25)/3)+gamma.^5);
 beta = epsilon; % error*gamma.^2/(12*(1+4*gamma)*n.^(3*alpha+5)+error*gamma*n.^((2*alpha+5)/2));
 omega = epsilon; % gamma.^4/(4*n.^((8*alpha+13)/3));
@@ -43,7 +43,7 @@ g = [v_left; v_right; h_bottom; h_top];
 % --------------------------------
 splits = [];
 fails = [];
-[T,D1,D2,splits,fails,flop_count] = dnc_eig(n,Atilde,n.^alpha*Btilde,epsilon,alpha,g,beta,omega,1/n,splits,fails,0);
+[T,D1,D2,splits,fails,flop_count] = dnc_eig(n,Atilde,n.^alpha*Btilde,epsilon,alpha,g,beta,omega,1/n,splits,fails,0,1);
 D = n.^alpha*D1/D2;
 S = Btilde*T;
 end
